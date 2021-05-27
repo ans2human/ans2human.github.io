@@ -9,7 +9,7 @@
 <meta name="author" content="">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-<title>Ans2human | Create Azure Pipeline by Azure REST APIs</title>
+<title>Ans2human | Restore Deleted WorkItems in Azure DevOps</title>
 <!--
 
 Template 2085 Neuron
@@ -37,7 +37,7 @@ http://www.tooplate.com/view/2085-neuron
 
 <!-- Navigation section  -->
 
-<div class="navbar navbar-default navbar-static-top" role="navigation">
+<!-- <div class="navbar navbar-default navbar-static-top" role="navigation">
      <div class="container">
 
           <div class="navbar-header">
@@ -58,17 +58,17 @@ http://www.tooplate.com/view/2085-neuron
           </div>
 
   </div>
-</div>
+</div> -->
 
 <!-- Home Section -->
 
-<section id="home" class="main-single-post parallax-section">
+<section id="home" class="blog-1 parallax-section">
      <div class="overlay"></div>
      <div class="container">
           <div class="row">
 
                <div class="col-md-12 col-sm-12">
-                    <h1>Single Post</h1>
+                    <h1>Restore Deleted WorkItems in Azure DevOps</h1>
                </div>
 
           </div>
@@ -85,9 +85,9 @@ http://www.tooplate.com/view/2085-neuron
                     <div class="blog-single-post-thumb">
                          
 
-                         <div class="blog-post-title">
+                         <!-- <div class="blog-post-title">
                               <h2>We Help You Create Perfect Modern Design</a></h2>
-                         </div>
+                         </div> -->
 
                          <div class="blog-post-format">
                               <span><a href="#"><img src="images/author-image1.jpg" class="img-responsive img-circle"> Jen Lopez</a></span>
@@ -96,21 +96,55 @@ http://www.tooplate.com/view/2085-neuron
                          </div>
 
                          <div class="blog-post-des">
-                              <p>Vivamus euismod tempor interdum. Vivamus non scelerisque ex, et interdum leo. In bibendum lacus vitae felis egestas, at consectetur metus facilisis. Morbi tellus dolor, porta dignissim enim sit amet, dapibus sagittis erat. In blandit elit sit amet dui aliquet congue nec vel quam. Integer id tristique libero.</p>
-                              <blockquote>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </blockquote>
-                              <p>Integer vestibulum vitae arcu vel consectetur. Morbi nisl enim, elementum eget enim nec, posuere commodo mi. Proin elementum metus et dolor posuere placerat. Proin in sagittis justo. Nulla tincidunt eu velit elementum accumsan.</p>
+                             <p>Suppose in your project there’s a critical sprint going on and someone by mistake deletes the work item from ADO Boards and spends 10 hours to find a way to restore it back to its glory.</p>
+                             <p>Well you don’t have to waste your time because to restore deleted work items from azure boards you can use Azure REST API’s, I know it is in the jungle of Microsoft Documentation, a different world altogether. Therefore you’ll find everything in this tutorial to restore your deleted work items.</p>
+                              <blockquote>Azure REST APIs can be lifesaver, some say its better than Microsoft application portals.</blockquote>
                               
                               <div class="blog-post-image">
-                              <img src="images/blog-image3.jpg" class="img-responsive" alt="Blog Image 3">
-                         </div>
+                              <img src="images/lostw.png" class="img-responsive" alt="Blog Image 3">
                          
-                              <h3>What is Personal Blog Theme?</h3>
-                              <p>Nulla tincidunt eu velit elementum accumsan. Vivamus euismod tempor interdum. Vivamus non scelerisque ex, et interdum leo. In bibendum lacus vitae felis egestas, at consectetur metus facilisis. Morbi tellus dolor, porta dignissim enim sit amet, dapibus sagittis erat. In blandit elit sit amet dui aliquet congue nec vel quam. Integer id tristique libero.</p>
-                         </div>
+                              <div>
+                              <h3>Prerequisites</h3>
+                              <ul>
+                                   <li>Access to ADO with permissions to project to confirm restoration.</li>
+                                   
+                                   <li>PAT Token from ADO.</li>
+                                   
+                                   <li>API Testing tool such as Postman or you can always use CURL.</li>
+                              </ul>
                          
+                              <h3>Steps to Create PAT Token.</h3>
+                              <ol>
+                                   <li>Sign in to your organization in Azure DevOps (https://dev.azure.com/{yourorganization}).</li>
+                                   <li>From your home page, open your user settings, and then select Personal access tokens.</li>
+                                   <li>And then select + New Token.</li>
+                                   <li>Name your token, select the organization where you want to use the token, and then choose a lifespan for your token.</li>
+                                   <li>Select the scopes for this token to authorize for your specific tasks.</li>
+                                   <blockquote>You can select Full Access but in this specific case you can select Work Items with Read, Write and Manage and then select Create. As shown below in picture.</blockquote>
+                                   <li>When you’re done, make sure to copy the token. For your security, it won’t be shown again. Now you will use this token as your password.</li>
+                              </ol>
                          
+                              <h3>Making Requests in Postman to restore Work Items:</h3>
+                              <ol>
+                                   <li>In postman’s authentication tab select Basic Auth and provide your ADO username and in place of password paste your PAT token.</li>
+                                  <li>Now we query to ADO using Microsoft’s RecycleBin APIs. Using the API mentioned below we can get the deleted Work Item.</li>
+                                   <code>GET https://dev.azure.com/{organization}/{project}/_apis/wit/recyclebin/{id}?api-version=4.1</code>
+                                  <li>You should see the JSON representation of deleted Work Item when you hit send in postman with Basic Auth setup and deleted Work Item passed in URL. Please don’t forget to enter project name in URL.</li>
 
-                         <div class="blog-single-post-image">
+                                  <li>Now in the same tab or new, you need to change GET request to PATCH and pass Boolean flag in request’s body. In Postman, you have to send request body in form of JSON to MS APIs as that is only valid content type. Therefore, in the current scenario we just send boolean key isDeleted with value as false</li>
+                                   
+                                        <code>
+                                             {
+                                             "isDeleted":false
+                                             }
+                                        </code>
+                                   
+                                  <li>This request should restore your deleted workItem, please search the in your ADO to confirm. After successful restoration of the WorkItems, please revoke the PAT token.</li>
+                              
+                              </ol>
+                         </div>
+
+                         <!-- <div class="blog-single-post-image">
                               <div class="col-md-4 col-sm-4">
                                    <img src="images/blog-image1.jpg" class="img-responsive" alt="Blog Image 1">
                               </div>
@@ -121,21 +155,21 @@ http://www.tooplate.com/view/2085-neuron
                                    <img src="images/blog-image3.jpg" class="img-responsive" alt="Blog Image 3">
                               </div>
                          </div>
-                         <p>Aliquam blandit velit nisi, sed fringilla felis lacinia sed. Integer vitae porta felis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Phasellus non tristique lacus. Suspendisse ut tortor vitae risus lacinia tristique. Aliquam sed consectetur libero.</p>
+                         <p>Aliquam blandit velit nisi, sed fringilla felis lacinia sed. Integer vitae porta felis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Phasellus non tristique lacus. Suspendisse ut tortor vitae risus lacinia tristique. Aliquam sed consectetur libero.</p> -->
 
                          <div class="blog-author">
                               <div class="media">
                                    <div class="media-object pull-left">
-                                        <img src="images/author-image1.jpg" class="img-circle img-responsive" alt="blog">
+                                        <img src="images/me.png" class="img-circle img-responsive" alt="blog">
                                    </div>
                                    <div class="media-body">
-                                        <h3 class="media-heading"><a href="#">Jen Lopez ( Designer )</a></h3>
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.</p>
+                                        <h3 class="media-heading"><a href="#">Anshuman Anand Singh</a></h3>
+                                        <p>Senior Technical Specialist | Python | Django | Azure DevOps | Innovation</p>
                                    </div>
                               </div>
                          </div>
 
-                         <div class="blog-comment">
+                         <!-- <div class="blog-comment">
                               <h3>Comments</h3>
                                    <div class="media">
                                         <div class="media-object pull-left">
@@ -189,7 +223,7 @@ http://www.tooplate.com/view/2085-neuron
                                              <input name="submit" type="submit" class="form-control" id="submit" value="Post Your Comment">
                                         </div>
                                    </form>
-                         </div>
+                         </div> -->
                     </div>
           </div>
      </div>
@@ -202,18 +236,18 @@ http://www.tooplate.com/view/2085-neuron
           <div class="row">
 
                <div class="col-md-5 col-md-offset-1 col-sm-6">
-                    <h3>Neuron Studio</h3>
-                    <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</p>
+                    <h3>Ans2human Blogs</h3>
+                    <p>Just a geek writing about technologies and coding...</p>
                     <div class="footer-copyright">
-                         <p>Copyright &copy; 2017 Your Company - Design: Tooplate. Downloaded from <a href="https://themeslab.org/" target="_blank">Themeslab</a></p>
+                         <p>Copyright &copy; 2021 . Downloaded from <a href="https://themeslab.org/" target="_blank">Themeslab</a></p>
                     </div>
                </div>
 
                <div class="col-md-4 col-md-offset-1 col-sm-6">
-                    <h3>Talk to us</h3>
-                    <p><i class="fa fa-globe"></i> 512 Delicious Street, San Francisco, CA 10880</p>
-                    <p><i class="fa fa-phone"></i> 010-020-0990</p>
-                    <p><i class="fa fa-save"></i> info@company.com</p>
+                    <h3>Contact Me</h3>
+                    <p><i class="fa fa-globe"></i> Sector 14, Chandigarh, CHD-UT 160014</p>
+                    <p><i class="fa fa-phone"></i> 82-8888-8985</p>
+                    <p><i class="fa fa-save"></i> ans2human@gmail.com</p>
                </div>
 
                <div class="clearfix col-md-12 col-sm-12">
@@ -222,11 +256,11 @@ http://www.tooplate.com/view/2085-neuron
 
                <div class="col-md-12 col-sm-12">
                     <ul class="social-icon">
-                         <li><a href="#" class="fa fa-facebook"></a></li>
-                         <li><a href="#" class="fa fa-twitter"></a></li>
-                         <li><a href="#" class="fa fa-google-plus"></a></li>
-                         <li><a href="#" class="fa fa-dribbble"></a></li>
-                         <li><a href="#" class="fa fa-linkedin"></a></li>
+                         <li><a href="https://stackoverflow.com/users/5901723/ans2human" class="fa fa-stack-overflow"></a></li>
+                         <li><a href="https://www.linkedin.com/in/ans2human/" class="fa fa-linkedin"></a></li>
+                         <li><a href="https://www.github.com/ans2human/" class="fa fa-github"></a></li>
+                         <li><a href="https://ans2human.medium.com/" class="fa fa-medium"></a></li>
+                         <li><a href="https://instagram.com/ans2human" class="fa fa-instagram"></a></li>
                     </ul>
                </div>
                
