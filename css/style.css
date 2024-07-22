@@ -196,7 +196,7 @@ a:hover, a:active, a:focus {
 -----------------------------------------*/
 
 .navbar-default {
-    background: #050000;
+    background-color: transparent;
     margin: 0 !important;
     padding: 18px 0;
 }
